@@ -1,0 +1,5 @@
+name: queue-api-environment
+variables:
+  - name: url
+    value: http://localhost:8080/api/
+    description: ""
