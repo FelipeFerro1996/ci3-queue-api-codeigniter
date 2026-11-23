@@ -57,4 +57,4 @@ $route['api/health'] = 'api/health/index';
 
 //tasks
 $route['api/tasks/(:num)']['GET'] = 'api/tasks/show/$1';
-$route['api/tasks/(:num)']['PUT'] = 'api/tasks/update/1';
+$route['api/tasks/(:num)']['PUT'] = 'api/tasks/update/$1';
