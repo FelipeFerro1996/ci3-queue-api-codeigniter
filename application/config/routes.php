@@ -54,3 +54,7 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['api/health'] = 'api/health/index';
+
+//tasks
+$route['api/tasks/(:num)']['GET'] = 'api/tasks/show/$1';
+$route['api/tasks/(:num)']['PUT'] = 'api/tasks/update/1';
