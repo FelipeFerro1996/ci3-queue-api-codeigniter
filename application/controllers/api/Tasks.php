@@ -2,14 +2,19 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require_once APPPATH . 'services/Task_service.php';
+require_once APPPATH . 'dto/Task_dto.php';
+
 class Tasks extends CI_Controller
 {
+
+    private $taskService;
     
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->model('Task_model');
+        $this->taskService = new Task_service();
     }
 
     public function index()
@@ -32,7 +37,11 @@ class Tasks extends CI_Controller
 
     public function getAll()
     {
-        $tasks = $this->Task_model->getAll();
+        $filters = [
+            'status' => $this->input->get('status')
+        ];
+
+        $tasks = $this->taskService->getAll($filters);
 
         return $this->response([
             'success' => true,
@@ -80,13 +89,13 @@ class Tasks extends CI_Controller
             ], 422); 
         }
 
-        $taskData = [
-            'title' => $title,
-            'description' => $description,
-            'priority' => $priority
-        ];
+        $dto = new Task_dto(
+            $title,
+            $description,
+            $priority
+        );
 
-        $task = $this->Task_model->create($taskData);
+        $task = $this->taskService->create($dto);
 
         if(!$task){
             return $this->response([
@@ -104,7 +113,7 @@ class Tasks extends CI_Controller
 
     public function show($id)
     {
-        $task = $this->Task_model->getByid($id);
+        $task = $this->taskService->getByid($id);
 
         if(!$task){
             return $this->response([
@@ -158,13 +167,15 @@ class Tasks extends CI_Controller
             ], 422); 
         }
 
-        $taskData = [
-            'title' => $title,
-            'description' => $description,
-            'priority' => $priority
-        ];
+        $dto = new Task_dto(
+            $title,
+            $description,
+            $priority
+        );
 
-        $task = $this->Task_model->update($id, $taskData);
+        var_dump($id, $dto);
+
+        $task = $this->taskService->update($id, $dto);
 
         if (!$task) {
             return $this->response([
@@ -181,7 +192,7 @@ class Tasks extends CI_Controller
     }
 
     public function destroy($id){
-        $retorno = $this->Task_model->delete($id);
+        $retorno = $this->taskService->delete($id);
 
         if(!$retorno){
             return $this->response([

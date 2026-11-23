@@ -5,7 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Task_model extends CI_Model 
 {
 
-    public function getAll(){
+    public function getAll($filters = []){
+
+        if(isset($filters['status'])){
+            $this->db->where('status', $filters['status']);
+        }
+
         return $this->db
             ->order_by('id', 'DESC')
             ->get('tasks')
@@ -19,47 +24,27 @@ class Task_model extends CI_Model
     }
 
     public function create($data){
-        $this->db->insert('tasks', $data);
+        $success = $this->db->insert('tasks', $data);
 
-        $id = $this->db->insert_id();
-
-        if (!$id){
+        if (!$success) {
             return false;
         }
 
-        return $this->db->get_where('tasks', [
-            'id' => $this->db->insert_id()
-        ])->row_array();
+        return $this->getById($this->db->insert_id());
     }
 
     public function update($id, $data){
-        if(!$this->getById($id)){
-            return false;
-        }
-
         $data['updated_at'] = date('Y-m-d H:i:s');
-
-        $this->db
+        var_dump($id);
+        return $this->db
             ->where('id', $id)
             ->update('tasks', $data);
-
-        if($this->db->error()['code'] != 0){
-            return false;
-        }
-
-        return $this->getById($id);
     }
 
     public function delete($id){
-        if (!$this->getById($id)){
-            return false;
-        }
-
-        $this->db
+        return $this->db
             ->where('id', $id)
             ->delete('tasks');
-
-        return $this->db->affected_rows() > 0;
     }
 
 }
